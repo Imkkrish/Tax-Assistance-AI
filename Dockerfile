@@ -53,8 +53,8 @@ COPY --from=backend-build /app/backend ./
 # Copy RAG chatbot code
 COPY Backend/RAG_CHATBOT ./rag
 
-# Install RAG Python dependencies
-RUN cd rag && pip3 install --no-cache-dir -r requirements.txt
+# Install RAG Python dependencies (using --break-system-packages for Alpine)
+RUN cd rag && pip3 install --no-cache-dir --break-system-packages -r requirements.txt
 
 # Build RAG vector database
 RUN cd rag && python3 rebuild_vector_db.py
