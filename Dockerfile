@@ -1,5 +1,5 @@
 # Multi-service Dockerfile for Tax Assistance AI
-# Combines Backend API and Frontend in a single container
+# Combines Backend API, Frontend, and RAG Chatbot in a single container
 FROM node:18-alpine as frontend-build
 
 # Set working directory for frontend
@@ -41,11 +41,30 @@ RUN mkdir -p uploads
 # Production stage
 FROM node:18-alpine
 
+# Install Python and pip
+RUN apk add --no-cache python3 py3-pip
+
 # Set working directory
 WORKDIR /app
 
 # Copy backend from build stage
 COPY --from=backend-build /app/backend ./
+
+# Copy RAG chatbot code
+COPY Backend/RAG_CHATBOT ./rag
+
+# Install RAG Python dependencies
+RUN cd rag && pip3 install --no-cache-dir -r requirements.txt
+
+# Build RAG vector database
+RUN cd rag && python3 rebuild_vector_db.py
+
+# Create necessary directories
+RUN mkdir -p uploads logs
+
+# Set environment variables
+ENV RAG_SERVER_URL=http://localhost:5555
+ENV FLASK_PORT=5555
 
 # Expose port (Render sets PORT environment variable)
 EXPOSE 10000
@@ -54,5 +73,5 @@ EXPOSE 10000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node healthcheck.js
 
-# Start the application
-CMD ["npm", "start"]
+# Start both RAG server and backend
+CMD ["sh", "-c", "cd rag && python3 flask_server.py & npm start"]
