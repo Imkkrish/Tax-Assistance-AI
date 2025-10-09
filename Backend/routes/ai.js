@@ -8,7 +8,7 @@ import AIQuery from '../models/AIQuery.js';
 const router = express.Router();
 
 // RAG Chatbot Flask server configuration
-const RAG_SERVER_URL = process.env.RAG_SERVER_URL || 'http://localhost:5555';
+const RAG_SERVER_URL = process.env.RAG_SERVER_URL || 'https://your-rag-service.onrender.com'; // Update with your deployed RAG service URL
 const USE_RAG_CHATBOT = process.env.USE_RAG_CHATBOT !== 'false'; // Enable by default
 
 // All routes require authentication
