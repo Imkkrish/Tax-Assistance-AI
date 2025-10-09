@@ -1,0 +1,24 @@
+flask==3.0.0
+flask-cors==4.0.0
+requests==2.31.0
+
+# Sentence transformers with compatible dependencies
+sentence-transformers==2.2.2
+huggingface-hub==0.10.1
+transformers==4.25.1
+tokenizers==0.13.2
+torch==2.0.0
+
+# Vector database and ML
+faiss-cpu==1.7.4
+numpy==1.24.3
+scikit-learn==1.2.2
+tqdm==4.65.0
+
+# PDF and validation
+PyPDF2==3.0.1
+pydantic==1.10.13
+
+# LangChain (optional - with fallback in code)
+langchain==0.1.0
+langchain-community==0.0.20

@@ -1,0 +1,12 @@
+PyPDF2
+langchain
+langchain-community
+langchain-huggingface
+sentence-transformers
+faiss-cpu
+reportlab
+scikit-learn
+transformers
+numpy
+torch
+

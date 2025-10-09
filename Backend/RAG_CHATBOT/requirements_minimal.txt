@@ -1,0 +1,16 @@
+# Minimal requirements for RAG chatbot (without LangChain)
+# This version avoids pydantic v2 compatibility issues
+
+# Core dependencies
+flask==3.0.0
+flask-cors==4.0.0
+sentence-transformers==2.2.2
+faiss-cpu==1.7.4
+numpy==1.24.3
+pydantic==1.10.13
+
+# PDF processing
+pypdf2==3.0.1
+
+# HTTP client (optional)
+requests==2.31.0
