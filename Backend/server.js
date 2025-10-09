@@ -1,5 +1,6 @@
 import express from 'express';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -7,6 +8,10 @@ import dotenv from 'dotenv';
 import connectDB from './config/database.js';
 import routes from './routes/index.js';
 import { errorHandler, handleUncaughtExceptions, handleUnhandledRejections } from './middleware/errorHandler.js';
+
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Handle uncaught exceptions
 handleUncaughtExceptions();
