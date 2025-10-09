@@ -1,14 +1,28 @@
 // Enhanced PDF text extraction and Form-16 parser
 import fs from 'fs';
-import pdf from 'pdf-parse';
+// Lazy load pdf-parse to avoid initialization issues
+let pdf = null;
+
+const getPdfParser = async () => {
+  if (!pdf) {
+    try {
+      pdf = (await import('pdf-parse')).default;
+    } catch (error) {
+      console.error('Failed to load pdf-parse:', error);
+      throw new Error('PDF parsing library not available');
+    }
+  }
+  return pdf;
+};
 
 /**
  * Extract text from PDF file
  */
 export const extractTextFromPDF = async (filePath) => {
   try {
+    const pdfParser = await getPdfParser();
     const dataBuffer = fs.readFileSync(filePath);
-    const data = await pdf(dataBuffer);
+    const data = await pdfParser(dataBuffer);
     
     // Keep original text with line breaks for better pattern matching
     const originalText = data.text;
