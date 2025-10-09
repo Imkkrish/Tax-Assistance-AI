@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -68,6 +69,18 @@ app.use('/uploads', express.static('uploads'));
 
 // API routes
 app.use('/api', routes);
+
+// Serve static files from dist directory (built frontend)
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Catch all handler: send back index.html for client-side routing
+app.get('*', (req, res) => {
+  // Skip if it's an API route (though this shouldn't happen since /api is handled above)
+  if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+    return res.status(404).json({ success: false, message: 'API endpoint not found' });
+  }
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 
 // Error handling middleware (must be last)
 app.use(errorHandler);
