@@ -39,7 +39,7 @@ jobs:
           from huggingface_hub.utils import RepositoryNotFoundError
           
           api = HfApi(token=os.environ["HF_TOKEN"])
-          repo_id = "Imkkrish/tax-assistance-rag-chatbot"
+          repo_id = "imkrish/tax-assistance-rag-chatbot"
           
           try:
               api.repo_info(repo_id=repo_id, repo_type="space")
@@ -69,14 +69,14 @@ jobs:
           
           # Clone or create the Hugging Face Space
           SPACE_NAME="tax-assistance-rag-chatbot"
-          SPACE_URL="https://huggingface.co/spaces/Imkkrish/${SPACE_NAME}"
+          SPACE_URL="https://huggingface.co/spaces/imkrish/${SPACE_NAME}"
           
           # Create a temporary directory for the HF repo
           mkdir -p /tmp/hf-space
           cd /tmp/hf-space
           
           # Clone the space
-          git clone "https://Imkkrish:${HF_TOKEN}@huggingface.co/spaces/Imkkrish/${SPACE_NAME}" .
+          git clone "https://imkrish:${HF_TOKEN}@huggingface.co/spaces/imkrish/${SPACE_NAME}" .
           
           # Verify we are in the correct directory before cleanup
           if [ -d ".git" ] && [ "$(pwd)" = "/tmp/hf-space" ]; then
