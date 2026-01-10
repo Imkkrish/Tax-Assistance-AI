@@ -1,26 +1,4 @@
 services:
-  # MongoDB Database
-  mongodb:
-    image: mongo:7-jammy
-    container_name: tax-assistant-db
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password123
-      MONGO_INITDB_DATABASE: tax-assistant
-    volumes:
-      - mongodb_data:/data/db
-      - ./Backend/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-    ports:
-      - "27017:27017"
-    networks:
-      - tax-network
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/tax-assistant --quiet
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
   # Backend API
   backend:
     build:
@@ -31,7 +9,8 @@ services:
     environment:
       NODE_ENV: production
       PORT: 8080
-      MONGODB_URI: mongodb://admin:password123@mongodb:27017/tax-assistant?authSource=admin
+      # Use the MONGO_URI passed from host environment which contains Atlas connection string
+      MONGODB_URI: ${MONGO_URI}
       JWT_SECRET: your-super-secret-jwt-key-change-in-production
       JWT_EXPIRE: 30d
       JWT_COOKIE_EXPIRE: 30
@@ -40,48 +19,19 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       MAX_FILE_SIZE: 10485760
       BCRYPT_ROUNDS: 12
-      RAG_SERVER_URL: http://rag-server:5555
-      USE_RAG_CHATBOT: true
+      RAG_SERVER_URL: http://localhost:5555 # Kept but not used
+      USE_RAG_CHATBOT: false # Disabled
     volumes:
       - uploads_data:/app/uploads
     ports:
       - "8080:8080"
-    depends_on:
-      mongodb:
-        condition: service_healthy
-      rag-server:
-        condition: service_healthy
     networks:
       - tax-network
     healthcheck:
-      test: ["CMD", "node", "healthcheck.js"]
+      test: [ "CMD", "node", "healthcheck.js" ]
       interval: 30s
       timeout: 10s
       retries: 3
-
-  # RAG Chatbot Server
-  rag-server:
-    build:
-      context: ./Backend/RAG_CHATBOT
-      dockerfile: Dockerfile
-    container_name: tax-assistant-rag
-    restart: unless-stopped
-    environment:
-      FLASK_PORT: 5555
-      PYTHONUNBUFFERED: 1
-    volumes:
-      - ./Backend/RAG_CHATBOT/vector_database:/app/vector_database
-      - ./Backend/RAG_CHATBOT/document_metadata:/app/document_metadata
-    ports:
-      - "5555:5555"
-    networks:
-      - tax-network
-    healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:5555/health')"]
-      interval: 30s
-      timeout: 10s
-      start_period: 180s  # 3 minutes for model download
-      retries: 5
 
   # Frontend Application
   frontend:
@@ -113,14 +63,12 @@ services:
     networks:
       - tax-network
     healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
       interval: 30s
       timeout: 3s
       retries: 3
 
 volumes:
-  mongodb_data:
-    driver: local
   uploads_data:
     driver: local
   redis_data:

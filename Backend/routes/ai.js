@@ -1,15 +1,10 @@
 import express from 'express';
-import axios from 'axios';
 import { protect } from '../middleware/auth.js';
 import { validateAIQuery, validateObjectId } from '../middleware/validation.js';
 import { catchAsync } from '../middleware/errorHandler.js';
 import AIQuery from '../models/AIQuery.js';
 
 const router = express.Router();
-
-// RAG Chatbot Flask server configuration
-const RAG_SERVER_URL = process.env.RAG_SERVER_URL || 'http://localhost:5555';
-const USE_RAG_CHATBOT = process.env.USE_RAG_CHATBOT !== 'false'; // Enable by default
 
 // All routes require authentication
 router.use(protect);
@@ -24,8 +19,7 @@ router.post('/query', validateAIQuery, catchAsync(async (req, res, next) => {
     user: req.user?.email || req.user?._id,
     query: query.substring(0, 100),
     queryType,
-    sessionId,
-    USE_RAG_CHATBOT
+    sessionId
   });
 
   // Create AI query record
@@ -40,22 +34,8 @@ router.post('/query', validateAIQuery, catchAsync(async (req, res, next) => {
 
   // Integrate with RAG Chatbot or fallback to mock responses
   try {
-    let aiResponse;
-    
-    // Try to use RAG chatbot if enabled and available
-    if (USE_RAG_CHATBOT) {
-      try {
-        console.log('🤖 Attempting RAG query to:', RAG_SERVER_URL);
-        aiResponse = await generateRAGResponse(query, context);
-        console.log('✅ Used RAG Chatbot for response');
-      } catch (ragError) {
-        console.log('⚠️ RAG Chatbot unavailable, using fallback:', ragError.message);
-        console.error('RAG Error details:', ragError.response?.data || ragError);
-        aiResponse = await generateAIResponse(query, queryType, context);
-      }
-    } else {
-      aiResponse = await generateAIResponse(query, queryType, context);
-    }
+    // Always use mock response as AI service is disabled
+    const aiResponse = await generateAIResponse(query, queryType, context);
 
     aiQuery.response = aiResponse.response;
     aiQuery.metadata = {
@@ -314,193 +294,57 @@ router.get('/search', catchAsync(async (req, res, next) => {
 // @route   GET /api/ai/rag/stats
 // @access  Private
 router.get('/rag/stats', catchAsync(async (req, res, next) => {
-  try {
-    if (!USE_RAG_CHATBOT) {
-      return res.status(400).json({
-        success: false,
-        message: 'RAG chatbot is disabled'
-      });
+  // Mock RAG stats since RAG is disabled
+  res.status(200).json({
+    success: true,
+    data: {
+      documents_indexed: 0,
+      total_queries: 0,
+      uptime: 0,
+      status: 'disabled'
     }
-
-    const response = await axios.get(`${RAG_SERVER_URL}/api/rag/stats`, {
-      timeout: 5000
-    });
-
-    res.status(200).json({
-      success: true,
-      data: response.data.data
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch RAG stats',
-      error: error.message
-    });
-  }
+  });
 }));
 
 // @desc    Get conversation summary from RAG
 // @route   GET /api/ai/conversation/summary
 // @access  Private
 router.get('/conversation/summary', catchAsync(async (req, res, next) => {
-  try {
-    if (!USE_RAG_CHATBOT) {
-      return res.status(400).json({
-        success: false,
-        message: 'RAG chatbot is disabled'
-      });
+  res.status(200).json({
+    success: true,
+    data: {
+      summary: "Conversation summary not available (AI disabled)"
     }
-
-    const response = await axios.get(`${RAG_SERVER_URL}/api/rag/conversation/summary`, {
-      timeout: 5000
-    });
-
-    res.status(200).json({
-      success: true,
-      data: response.data.data
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch conversation summary',
-      error: error.message
-    });
-  }
+  });
 }));
 
 // @desc    Clear RAG conversation history
 // @route   POST /api/ai/conversation/clear
 // @access  Private
 router.post('/conversation/clear', catchAsync(async (req, res, next) => {
-  try {
-    if (!USE_RAG_CHATBOT) {
-      return res.status(400).json({
-        success: false,
-        message: 'RAG chatbot is disabled'
-      });
-    }
-
-    const response = await axios.post(`${RAG_SERVER_URL}/api/rag/conversation/clear`, {}, {
-      timeout: 5000
-    });
-
-    res.status(200).json({
-      success: true,
-      message: 'Conversation history cleared'
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to clear conversation history',
-      error: error.message
-    });
-  }
+  res.status(200).json({
+    success: true,
+    message: 'Conversation history cleared (Local)'
+  });
 }));
 
 // @desc    Get question suggestions
 // @route   POST /api/ai/suggestions
 // @access  Private
 router.post('/suggestions', catchAsync(async (req, res, next) => {
-  const { query } = req.body;
+  // Fallback suggestions
+  const fallbackSuggestions = [
+    'What are the major tax deductions available?',
+    'How do I calculate my income tax?',
+    'What is the difference between old and new tax regime?',
+    'Can you explain Section 80C deductions?'
+  ];
 
-  try {
-    if (USE_RAG_CHATBOT) {
-      const response = await axios.post(`${RAG_SERVER_URL}/api/rag/suggest`, {
-        query
-      }, {
-        timeout: 5000
-      });
-
-      return res.status(200).json({
-        success: true,
-        data: response.data.data.suggestions
-      });
-    }
-
-    // Fallback suggestions
-    const fallbackSuggestions = [
-      'What are the major tax deductions available?',
-      'How do I calculate my income tax?',
-      'What is the difference between old and new tax regime?',
-      'Can you explain Section 80C deductions?'
-    ];
-
-    res.status(200).json({
-      success: true,
-      data: fallbackSuggestions
-    });
-  } catch (error) {
-    // Return fallback on error
-    res.status(200).json({
-      success: true,
-      data: [
-        'What are the major tax deductions available?',
-        'How do I calculate my income tax?',
-        'What is the difference between old and new tax regime?',
-        'Can you explain Section 80C deductions?'
-      ]
-    });
-  }
+  res.status(200).json({
+    success: true,
+    data: fallbackSuggestions
+  });
 }));
-
-// RAG Chatbot response generator with enhanced features
-async function generateRAGResponse(query, context) {
-  const startTime = Date.now();
-
-  try {
-    const response = await axios.post(`${RAG_SERVER_URL}/api/rag/query`, {
-      query,
-      top_k: context?.top_k || 5,
-      document_id: context?.document_id || 'ITA_primary',
-      use_context: context?.use_context !== false  // Default to true
-    }, {
-      timeout: 30000 // 30 second timeout
-    });
-
-    const processingTime = Date.now() - startTime;
-
-    if (!response.data.success) {
-      throw new Error(response.data.error || 'RAG query failed');
-    }
-
-    const data = response.data.data;
-
-    return {
-      response: data.answer,
-      tokens: {
-        prompt: Math.floor(query.length / 4),
-        completion: Math.floor(data.answer.length / 4),
-        total: Math.floor((query.length + data.answer.length) / 4)
-      },
-      processingTime: data.processing_time || processingTime / 1000,
-      confidence: calculateConfidence(data.sources),
-      sources: data.sources.map(source => ({
-        type: 'income_tax_act',
-        reference: `Page ${source.page}`,
-        section: `Chunk ${source.chunk_id}`,
-        similarity: source.similarity,
-        base_similarity: source.base_similarity,
-        keyword_boost: source.keyword_boost
-      })),
-      model: 'rag-faiss-chatbot-v2',
-      conversation_context: data.conversation_context
-    };
-  } catch (error) {
-    console.error('❌ RAG Server Error:', error.message);
-    throw error;
-  }
-}
-
-// Calculate confidence score based on similarity scores
-function calculateConfidence(sources) {
-  if (!sources || sources.length === 0) return 0.5;
-  
-  const avgSimilarity = sources.reduce((sum, source) => sum + (source.similarity || 0), 0) / sources.length;
-  
-  // Convert similarity (0-1) to confidence (0-1)
-  // Higher similarity = higher confidence
-  return Math.min(Math.max(avgSimilarity, 0.3), 0.95);
-}
 
 // Mock AI response generator (fallback when RAG is unavailable)
 async function generateAIResponse(query, queryType, context) {
