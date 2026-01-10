@@ -129,7 +129,6 @@ Desktop.ini
 
 # Uploads and data
 uploads/
-*.pdf
 *.doc
 *.docx
 
