@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Calculator, Upload, MessageCircle, BarChart3, BookOpen } from 'lucide-react'
+import { Calculator, Upload, MessageCircle, BarChart3, BookOpen, HelpCircle } from 'lucide-react'
 import { translations } from '../data/translations'
 import apiClient from '../utils/api'
 import { Link as RouterLink } from 'react-router-dom'
@@ -17,6 +17,7 @@ const Navbar = ({ language, setLanguage }) => {
     { path: '/assistant', icon: MessageCircle, label: t.nav.assistant },
     { path: '/comparison', icon: BarChart3, label: t.nav.comparison },
     { path: '/deductions', icon: BookOpen, label: t.nav.deductions },
+    { path: '/need-help', icon: null, label: 'Need Help' }
   ]
 
   return (
@@ -27,7 +28,7 @@ const Navbar = ({ language, setLanguage }) => {
             <Calculator className="h-8 w-8 text-primary-600" />
             <span className="text-xl font-bold text-gray-800">{t.appName}</span>
           </Link>
-          
+
           <div className="hidden md:flex space-x-1">
             {navItems.map((item) => {
               const Icon = item.icon
@@ -36,13 +37,12 @@ const Navbar = ({ language, setLanguage }) => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'text-gray-600 hover:text-primary-600 hover:bg-gray-100'
-                  }`}
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive
+                    ? 'bg-primary-100 text-primary-700'
+                    : 'text-gray-600 hover:text-primary-600 hover:bg-gray-100'
+                    }`}
                 >
-                  <Icon className="h-4 w-4" />
+                  {Icon && <Icon className="h-4 w-4" />}
                   <span>{item.label}</span>
                 </Link>
               )
@@ -54,13 +54,13 @@ const Navbar = ({ language, setLanguage }) => {
               <>
                 <span className="text-sm text-gray-600 hidden sm:inline">Signed in</span>
                 <button
-                  onClick={async () => { 
+                  onClick={async () => {
                     try {
                       await apiClient.logout();
                     } catch (error) {
                       console.log('Logout failed, clearing token anyway:', error.message);
                     } finally {
-                      apiClient.setAuthToken(null); 
+                      apiClient.setAuthToken(null);
                       window.location.href = '/';
                     }
                   }}

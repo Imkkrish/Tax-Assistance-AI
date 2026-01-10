@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import { X, Search, HelpCircle, Calculator, Upload, MessageCircle, FileText, BookOpen } from 'lucide-react'
 import { translations } from '../data/translations'
 
-const HelpCenter = ({ isOpen, onClose, language = 'en' }) => {
+const HelpCenter = ({ isOpen, onClose, language = 'en', isPage = false }) => {
   const t = translations[language]
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState(null)
+
+  // ... categories definition ...
 
   const helpCategories = [
     {
@@ -107,31 +109,39 @@ const HelpCenter = ({ isOpen, onClose, language = 'en' }) => {
     )
   )
 
-  if (!isOpen) return null
+  if (!isOpen && !isPage) return null
+
+  const containerClasses = isPage
+    ? "w-full bg-white shadow-xl rounded-xl"
+    : "fixed right-0 top-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 overflow-y-auto"
 
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-white/10 bg-opacity-50 z-40"
-        onClick={onClose}
-      />
+      {/* Backdrop - only for modal mode */}
+      {!isPage && (
+        <div
+          className="fixed inset-0 bg-white/10 bg-opacity-50 z-40"
+          onClick={onClose}
+        />
+      )}
 
       {/* Help Center Panel */}
-      <div className="fixed right-0 top-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 overflow-y-auto">
+      <div className={containerClasses}>
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 z-10">
+        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 z-10 rounded-t-xl">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-gray-800 flex items-center">
               <BookOpen className="h-6 w-6 text-blue-600 mr-2" />
               {t.helpCenter || 'Help Center'}
             </h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <X className="h-6 w-6" />
-            </button>
+            {!isPage && (
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            )}
           </div>
 
           {/* Search */}

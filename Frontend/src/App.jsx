@@ -11,6 +11,7 @@ import DocumentUpload from './pages/DocumentUpload'
 import ChatAssistant from './pages/ChatAssistant'
 import TaxComparison from './pages/TaxComparison'
 import DeductionGuide from './pages/DeductionGuide'
+import NeedHelp from './pages/NeedHelp'
 import FloatingHelpButton from './components/FloatingHelpButton'
 
 function App() {
@@ -39,11 +40,12 @@ function App() {
             <Route path="/assistant" element={<RequireAuth><ChatAssistant language={language} /></RequireAuth>} />
             <Route path="/comparison" element={<TaxComparison language={language} />} />
             <Route path="/deductions" element={<DeductionGuide language={language} />} />
+            <Route path="/need-help" element={<NeedHelp language={language} />} />
             <Route path="/login" element={<Login language={language} />} />
             <Route path="/register" element={<Register language={language} />} />
           </Routes>
         </main>
-        <FloatingHelpButton language={language} />
+        {/* Removed FloatingHelpButton as it is now in Navbar */}
         <Toaster position="top-right" />
       </div>
     </Router>
