@@ -22,3 +22,4 @@ pydantic==1.10.13
 # LangChain (optional - with fallback in code)
 langchain==0.1.0
 langchain-community==0.0.20
+gradio>=5.11.0
