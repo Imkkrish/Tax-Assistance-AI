@@ -88,7 +88,7 @@ router.post('/register', validateUserRegistration, validatePAN, catchAsync(async
     phone
   });
 
-  logAuth('User registration')(req, res, () => {});
+  logAuth('User registration')(req, res, () => { });
   sendTokenResponse(user, 201, res);
 }));
 
@@ -134,7 +134,7 @@ router.post('/login', validateUserLogin, rateLimitAuth(), catchAsync(async (req,
   user.lastLogin = new Date();
   await user.save();
 
-  logAuth('User login')(req, res, () => {});
+  logAuth('User login')(req, res, () => { });
   sendTokenResponse(user, 200, res);
 }));
 
@@ -193,17 +193,23 @@ router.put('/profile', protect, validateProfileUpdate, validatePAN, catchAsync(a
     fieldsToUpdate.pan = req.body.pan.toUpperCase();
   }
 
-  const user = await User.findByIdAndUpdate(req.user._id, fieldsToUpdate, {
-    new: true,
-    runValidators: true
-  });
+  try {
+    const user = await User.findByIdAndUpdate(req.user._id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
 
-  res.status(200).json({
-    success: true,
-    data: {
-      user
-    }
-  });
+    res.status(200).json({
+      success: true,
+      data: {
+        user
+      }
+    });
+  } catch (err) {
+    console.error('Profile update error:', err.message);
+    console.error(err.stack); // Added stack trace
+    res.status(500).send('Server Error');
+  }
 }));
 
 // @desc    Update password

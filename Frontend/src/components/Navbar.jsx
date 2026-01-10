@@ -1,12 +1,13 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Calculator, Upload, MessageCircle, BarChart3, BookOpen, HelpCircle } from 'lucide-react'
+import { Calculator, Upload, MessageCircle, BarChart3, BookOpen, HelpCircle, Menu, X } from 'lucide-react'
 import { translations } from '../data/translations'
 import apiClient from '../utils/api'
 import { Link as RouterLink } from 'react-router-dom'
 import LanguageSwitcher from './LanguageSwitcher'
 
 const Navbar = ({ language, setLanguage }) => {
+  const [isOpen, setIsOpen] = React.useState(false)
   const location = useLocation()
   const t = translations[language]
 
@@ -49,7 +50,7 @@ const Navbar = ({ language, setLanguage }) => {
             })}
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-4">
             {apiClient.token ? (
               <>
                 <span className="text-sm text-gray-600 hidden sm:inline">Signed in</span>
@@ -77,8 +78,83 @@ const Navbar = ({ language, setLanguage }) => {
             )}
             <LanguageSwitcher language={language} setLanguage={setLanguage} />
           </div>
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center space-x-4">
+            <LanguageSwitcher language={language} setLanguage={setLanguage} />
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-gray-600 hover:text-gray-900 focus:outline-none"
+            >
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="md:hidden bg-white border-b border-gray-200">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            {navItems.map((item) => {
+              const Icon = item.icon
+              const isActive = location.pathname === item.path
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setIsOpen(false)}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive
+                    ? 'bg-primary-100 text-primary-700'
+                    : 'text-gray-600 hover:text-primary-600 hover:bg-gray-100'
+                    }`}
+                >
+                  {Icon && <Icon className="h-5 w-5" />}
+                  <span>{item.label}</span>
+                </Link>
+              )
+            })}
+
+            {/* Mobile Auth Buttons */}
+            {!apiClient.token ? (
+              <div className="pt-4 flex flex-col space-y-2 px-3">
+                <RouterLink
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full text-center px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:bg-gray-100 border border-gray-200"
+                >
+                  {t.login}
+                </RouterLink>
+                <RouterLink
+                  to="/register"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full text-center px-3 py-2 rounded-md text-base font-medium bg-blue-600 text-white hover:bg-blue-700"
+                >
+                  {t.register}
+                </RouterLink>
+              </div>
+            ) : (
+              <div className="pt-4 px-3">
+                <button
+                  onClick={async () => {
+                    setIsOpen(false);
+                    try {
+                      await apiClient.logout();
+                    } catch (error) {
+                      console.log('Logout failed');
+                    } finally {
+                      apiClient.setAuthToken(null);
+                      window.location.href = '/';
+                    }
+                  }}
+                  className="w-full text-center px-3 py-2 bg-gray-100 rounded-md text-base font-medium hover:bg-gray-200"
+                >
+                  {t.logout}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   )
 }
