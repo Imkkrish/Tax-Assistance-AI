@@ -9,8 +9,6 @@ services:
     environment:
       NODE_ENV: production
       PORT: 8080
-      # Use the MONGO_URI passed from host environment which contains Atlas connection string
-      MONGODB_URI: ${MONGO_URI}
       JWT_SECRET: your-super-secret-jwt-key-change-in-production
       JWT_EXPIRE: 30d
       JWT_COOKIE_EXPIRE: 30
@@ -21,6 +19,8 @@ services:
       BCRYPT_ROUNDS: 12
       RAG_SERVER_URL: http://localhost:5555 # Kept but not used
       USE_RAG_CHATBOT: false # Disabled
+    env_file:
+      - ./Backend/.env
     volumes:
       - uploads_data:/app/uploads
     ports:
@@ -32,6 +32,23 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  # AI Service (RAG Chatbot)
+  ai-service:
+    build:
+      context: ./Ai-services
+      dockerfile: Dockerfile
+    container_name: tax-assistant-ai
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./Ai-services/.env
+    volumes:
+      - ./Ai-services:/app
+      - ./Ai-services/chroma_db:/app/chroma_db # Persist vector store
+    networks:
+      - tax-network
 
   # Frontend Application
   frontend:

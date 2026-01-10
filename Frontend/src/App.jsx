@@ -13,6 +13,7 @@ import TaxComparison from './pages/TaxComparison'
 import DeductionGuide from './pages/DeductionGuide'
 import NeedHelp from './pages/NeedHelp'
 import FloatingHelpButton from './components/FloatingHelpButton'
+import Chatbot from './components/Chatbot'
 
 function App() {
   // Load saved language preference or default to 'en'
@@ -46,6 +47,7 @@ function App() {
           </Routes>
         </main>
         {/* Removed FloatingHelpButton as it is now in Navbar */}
+        <Chatbot />
         <Toaster position="top-right" />
       </div>
     </Router>
