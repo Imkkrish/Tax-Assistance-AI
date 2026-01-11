@@ -135,6 +135,7 @@ uploads/
 # Vector databases and metadata
 vector_database/
 document_metadata/
+chroma_db/
 
 # Docker volumes (local development)
 mongodb_data/
