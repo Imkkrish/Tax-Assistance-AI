@@ -6,7 +6,10 @@ import TaxDocument from '../models/TaxDocument.js';
 
 const router = express.Router();
 
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+let AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+if (process.env.AI_SERVICE_URL && !process.env.AI_SERVICE_URL.startsWith('http')) {
+    AI_SERVICE_URL = `https://${process.env.AI_SERVICE_URL}`;
+}
 
 // Proxy /chat to AI Service
 // Using optionalAuth so it works even if frontend doesn't send token yet (though it should)

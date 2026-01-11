@@ -115,7 +115,12 @@ async def analyze_document_endpoint(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 # 5. Configuration for deployment
-backend_url = os.getenv("BACKEND_URL", "http://localhost:5000")
+backend_url_env = os.getenv("BACKEND_URL", "http://localhost:5000")
+if not backend_url_env.startswith("http"):
+    backend_url = f"https://{backend_url_env}"
+else:
+    backend_url = backend_url_env
+
 print(f"🔗 Backend URL configured as: {backend_url}")
 
 if __name__ == "__main__":

@@ -12,12 +12,12 @@ services:
         fromService:
           type: web
           name: tax-assistance-backend
-          property: url
+          property: host
       - key: VITE_AI_SERVICE_URL
         fromService:
           type: web
           name: tax-assistance-ai
-          property: url
+          property: host
       - key: NODE_VERSION
         value: 20.11.0
 
@@ -37,12 +37,12 @@ services:
         fromService:
           type: web
           name: tax-assistance-frontend
-          property: url
+          property: host
       - key: AI_SERVICE_URL
         fromService:
           type: web
           name: tax-assistance-ai
-          property: url
+          property: host
       - key: MONGO_URI
         sync: false # User must provide this in dashboard
       - key: JWT_SECRET
@@ -66,6 +66,6 @@ services:
         fromService:
           type: web
           name: tax-assistance-backend
-          property: url
+          property: host
       - key: GOOGLE_API_KEY
         sync: false # User must provide this in dashboard

@@ -35,7 +35,15 @@ app.use(helmet({
 
 // CORS Configuration
 const defaultOrigins = ['http://localhost:3000', 'http://localhost:5174'];
-const frontendUrl = process.env.FRONTEND_URL ? process.env.FRONTEND_URL.replace(/\/$/, '') : null;
+const getEnvUrl = (url) => {
+  if (!url) return null;
+  if (url.startsWith('http')) return url;
+  return `https://${url}`;
+};
+
+const frontendUrl = getEnvUrl(process.env.FRONTEND_URL);
+// For CORS, we might need to check both origin with and without trailing slash, etc.
+// If Render gives us just domain, we construct https://domain
 const allowedOrigins = [frontendUrl, 'https://tax-assistance-ai.vercel.app', ...defaultOrigins].filter(Boolean);
 
 app.use(cors({
