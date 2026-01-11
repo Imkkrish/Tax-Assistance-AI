@@ -21,7 +21,7 @@ if not api_key:
 genai.configure(api_key=api_key)
 
 # Configure the model
-model = genai.GenerativeModel('gemini-2.5-flash')
+model = genai.GenerativeModel('gemini-2.5-flash-lite')
 
 app = FastAPI(title="AI Tax Assistant Backend")
 

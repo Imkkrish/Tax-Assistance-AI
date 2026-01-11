@@ -2,7 +2,7 @@ import express from 'express';
 import auth from './auth.js';
 import taxCalculations from './taxCalculations.js';
 import documents from './documents.js';
-import ai from './ai.js';
+import ai from './aiRoutes.js';
 import enhancedTax from './enhancedTax.js';
 
 const router = express.Router();

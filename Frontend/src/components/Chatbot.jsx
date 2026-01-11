@@ -2,6 +2,54 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, Bot, User, Trash2, Loader2, Minimize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+
+// Helper to format text with basic bullet points
+const FormatMessage = ({ text }) => {
+    if (!text) return null;
+
+    // Split by newlines
+    const lines = text.split('\n');
+    const formattedElements = [];
+
+    let currentList = [];
+
+    lines.forEach((line, index) => {
+        const trimmed = line.trim();
+        // Check for bullet points (* or -)
+        if (trimmed.startsWith('* ') || trimmed.startsWith('- ') || /^\d+\./.test(trimmed)) {
+            // Remove the bullet char
+            const content = trimmed.replace(/^(\* | - |\d+\. )/, '');
+            currentList.push(<li key={`li-${index}`} className="ml-4 list-disc mb-1">{content}</li>);
+        } else {
+            // If we have a list accumulated, push it first
+            if (currentList.length > 0) {
+                formattedElements.push(<ul key={`ul-${index}`} className="mb-2 list-outside ml-4">{[...currentList]}</ul>);
+                currentList = [];
+            }
+
+            // Check for bold text (**text**)
+            const parts = line.split(/(\*\*.*?\*\*)/g);
+            const lineContent = parts.map((part, i) => {
+                if (part.startsWith('**') && part.endsWith('**')) {
+                    return <strong key={i}>{part.slice(2, -2)}</strong>;
+                }
+                return part;
+            });
+
+            if (trimmed) {
+                formattedElements.push(<p key={`p-${index}`} className="mb-2 last:mb-0">{lineContent}</p>);
+            }
+        }
+    });
+
+    // Flush remaining list
+    if (currentList.length > 0) {
+        formattedElements.push(<ul key="ul-end" className="mb-2 list-outside ml-4">{[...currentList]}</ul>);
+    }
+
+    return <div className="text-sm leading-relaxed">{formattedElements}</div>;
+};
+
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([]);
@@ -51,16 +99,17 @@ const Chatbot = () => {
         try {
             // Need to point to the actual exposed AI Service URL. 
             // In dev with Docker, client runs on host, so localhost:8000 is accessible if mapped.
-            const response = await fetch('http://localhost:8000/chat', {
+            const response = await fetch('/api/ai/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: userMessage.text, session_id: sessionId })
+                body: JSON.stringify({ message: userMessage.text, context: sessionId })
             });
 
             if (!response.ok) throw new Error('Failed to fetch response');
 
             const data = await response.json();
-            const botMessage = { id: Date.now() + 1, text: data.answer, sender: 'bot' };
+            // Fallback to data.answer if data.reply isn't present, but our backend uses 'reply'
+            const botMessage = { id: Date.now() + 1, text: data.reply || data.answer, sender: 'bot' };
             setMessages(prev => [...prev, botMessage]);
 
         } catch (error) {
@@ -154,12 +203,16 @@ const Chatbot = () => {
                                     className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm shadow-sm ${msg.sender === 'user'
-                                            ? 'bg-indigo-600 text-white rounded-br-none'
-                                            : msg.isError
-                                                ? 'bg-red-50 text-red-600 border border-red-200 rounded-bl-none'
-                                                : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-bl-none'
+                                        ? 'bg-indigo-600 text-white rounded-br-none'
+                                        : msg.isError
+                                            ? 'bg-red-50 text-red-600 border border-red-200 rounded-bl-none'
+                                            : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-bl-none'
                                         }`}>
-                                        {msg.text}
+                                        {msg.sender === 'user' ? (
+                                            msg.text
+                                        ) : (
+                                            <FormatMessage text={msg.text} />
+                                        )}
                                     </div>
                                 </motion.div>
                             ))}
