@@ -1,12 +1,16 @@
 import express from 'express';
 import axios from 'axios';
+import { protect, optionalAuth } from '../middleware/auth.js';
+import TaxCalculation from '../models/TaxCalculation.js';
+import TaxDocument from '../models/TaxDocument.js';
 
 const router = express.Router();
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
 // Proxy /chat to AI Service
-router.post('/chat', async (req, res) => {
+// Using optionalAuth so it works even if frontend doesn't send token yet (though it should)
+router.post('/chat', optionalAuth, async (req, res) => {
     try {
         const { message, context } = req.body;
 
@@ -15,9 +19,47 @@ router.post('/chat', async (req, res) => {
             return res.status(400).json({ error: 'Message is required' });
         }
 
+        // 1. Build User Context from DB if user is logged in
+        let dbContext = "";
+        if (req.user) {
+            try {
+                // Get latest tax calculation
+                const taxCalc = await TaxCalculation.findOne({ user: req.user._id })
+                    .sort({ createdAt: -1 })
+                    .select('inputData calculationResults financialYear taxRegime');
+
+                // Get recent processed documents
+                const documents = await TaxDocument.find({
+                    user: req.user._id,
+                    processingStatus: 'completed'
+                })
+                    .sort({ createdAt: -1 })
+                    .limit(3)
+                    .select('documentType extractedData aiAnalysis filename');
+
+                if (taxCalc) {
+                    dbContext += `\n[USER TAX PROFILE]\nFinancial Year: ${taxCalc.financialYear}\nRegime: ${taxCalc.taxRegime}\nIncome/Deductions: ${JSON.stringify(taxCalc.inputData)}\nResults: ${JSON.stringify(taxCalc.calculationResults)}\n`;
+                }
+
+                if (documents.length > 0) {
+                    dbContext += `\n[UPLOADED DOCUMENTS]\n${documents.map(d =>
+                        `- ${d.documentType} (${d.filename}): ${JSON.stringify(d.extractedData || d.aiAnalysis)}`
+                    ).join('\n')}\n`;
+                }
+            } catch (err) {
+                console.error("Error fetching user stats for AI context:", err);
+                // Continue without context if DB fetch fails
+            }
+        }
+
+        // 2. Append DB Context with a clear separator so the AI knows this is system-provided data
+        const enrichedContext = `${context || ''}\n${dbContext ? `\n\n=== SYSTEM DATA ===\n${dbContext}\n===================\n` : ''}`;
+
+        console.log("Sending to AI with Context Length:", enrichedContext.length);
+
         const response = await axios.post(`${AI_SERVICE_URL}/chat`, {
             message,
-            context
+            context: enrichedContext
         });
 
         return res.json(response.data);

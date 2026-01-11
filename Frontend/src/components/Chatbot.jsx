@@ -99,9 +99,15 @@ const Chatbot = () => {
         try {
             // Need to point to the actual exposed AI Service URL. 
             // In dev with Docker, client runs on host, so localhost:8000 is accessible if mapped.
+            const token = localStorage.getItem('authToken');
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
             const response = await fetch('/api/ai/chat', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: headers,
                 body: JSON.stringify({ message: userMessage.text, context: sessionId })
             });
 
