@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import config from '../config';
 import { MessageCircle, X, Send, Bot, User, Trash2, Loader2, Minimize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -97,15 +98,15 @@ const Chatbot = () => {
         setIsLoading(true);
 
         try {
-            // Need to point to the actual exposed AI Service URL. 
-            // In dev with Docker, client runs on host, so localhost:8000 is accessible if mapped.
+            // Use Backend Proxy for Chat
             const token = localStorage.getItem('authToken');
             const headers = { 'Content-Type': 'application/json' };
             if (token) {
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            const response = await fetch('/api/ai/chat', {
+            // Calls Backend which proxies to AI
+            const response = await fetch(`${config.backendUrl}/api/ai/chat`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify({ message: userMessage.text, context: sessionId })
@@ -131,7 +132,10 @@ const Chatbot = () => {
         if (!window.confirm("Are you sure you want to end this session? Chat history will be permanently deleted.")) return;
 
         try {
-            await fetch('http://localhost:8000/end_session', {
+            // Direct call to AI service to flush session if needed, or via backend
+            // Assuming direct call for now based on original code, but ideally should be via backend
+            // Original was: http://localhost:8000/end_session
+            await fetch(`${config.aiServiceUrl}/end_session`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ session_id: sessionId })

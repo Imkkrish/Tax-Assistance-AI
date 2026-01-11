@@ -1,4 +1,5 @@
 // API Configuration and utilities
+import config from '../config';
 // Prefer Vite env if provided, else fall back to sensible defaults
 let API_BASE_URL = null;
 try {
@@ -10,7 +11,9 @@ try {
 }
 
 if (!API_BASE_URL) {
-  API_BASE_URL = '/api';
+  // If not explicitly set, derive from config.backendUrl (which defaults to localhost:5000)
+  // config.backendUrl typically doesn't have trailing slash, so we append /api
+  API_BASE_URL = `${config.backendUrl}/api`;
 }
 
 // API client with error handling
@@ -55,7 +58,7 @@ class ApiClient {
 
       const text = await response.text();
       let data;
-      
+
       try {
         data = text ? JSON.parse(text) : {};
       } catch {

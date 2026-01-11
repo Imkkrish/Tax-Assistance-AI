@@ -114,5 +114,10 @@ async def analyze_document_endpoint(file: UploadFile = File(...)):
         print(f"Error in analyze-document endpoint: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# 5. Configuration for deployment
+backend_url = os.getenv("BACKEND_URL", "http://localhost:5000")
+print(f"🔗 Backend URL configured as: {backend_url}")
+
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)

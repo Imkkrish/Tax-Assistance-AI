@@ -1,0 +1,71 @@
+services:
+  # --------------------------------------------------------------------------------
+  # 1. Frontend Service (Static Site)
+  # --------------------------------------------------------------------------------
+  - type: web
+    name: tax-assistance-frontend
+    env: static
+    buildCommand: cd Frontend && npm install && npm run build
+    staticPublishPath: Frontend/dist
+    envVars:
+      - key: VITE_BACKEND_URL
+        fromService:
+          type: web
+          name: tax-assistance-backend
+          property: url
+      - key: VITE_AI_SERVICE_URL
+        fromService:
+          type: web
+          name: tax-assistance-ai
+          property: url
+      - key: NODE_VERSION
+        value: 20.11.0
+
+  # --------------------------------------------------------------------------------
+  # 2. Backend Service (Node.js)
+  # --------------------------------------------------------------------------------
+  - type: web
+    name: tax-assistance-backend
+    env: node
+    region: singapore # Optional: Choose region closest to users
+    buildCommand: cd Backend && npm install
+    startCommand: cd Backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: tax-assistance-frontend
+          property: url
+      - key: AI_SERVICE_URL
+        fromService:
+          type: web
+          name: tax-assistance-ai
+          property: url
+      - key: MONGO_URI
+        sync: false # User must provide this in dashboard
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_VERSION
+        value: 20.11.0
+
+  # --------------------------------------------------------------------------------
+  # 3. AI Service (Python)
+  # --------------------------------------------------------------------------------
+  - type: web
+    name: tax-assistance-ai
+    env: python
+    region: singapore
+    buildCommand: cd Ai-services && pip install -r requirements.txt
+    startCommand: cd Ai-services && python main.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: BACKEND_URL
+        fromService:
+          type: web
+          name: tax-assistance-backend
+          property: url
+      - key: GOOGLE_API_KEY
+        sync: false # User must provide this in dashboard

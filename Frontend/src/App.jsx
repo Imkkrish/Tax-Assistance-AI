@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import config from './config';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import Navbar from './components/Navbar'
@@ -28,6 +29,22 @@ function App() {
     // Set document lang attribute for accessibility
     document.documentElement.lang = language
   }, [language])
+
+  // Wake up services on load
+  useEffect(() => {
+    const wakeUpServices = async () => {
+      try {
+        // Ping Backend
+        fetch(`${config.backendUrl}/api/health`, { method: 'GET' }).catch(e => console.log('Backend wake-up', e));
+        // Ping AI Service via Backend Proxy or Direct if CORS allows (usually better to ping backend first)
+        // If AI service has a public address, we can ping it too.
+        fetch(`${config.aiServiceUrl}/`, { method: 'GET' }).catch(e => console.log('AI Service wake-up', e));
+      } catch (error) {
+        console.error("Wake up failed", error);
+      }
+    };
+    wakeUpServices();
+  }, []);
 
   return (
     <Router>
