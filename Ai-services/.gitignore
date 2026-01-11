@@ -1,0 +1,12 @@
+# Virtual Environment
+venv/
+
+# Environment Variables (Secrets)
+.env
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Vector Database Storage
+chroma_db/
