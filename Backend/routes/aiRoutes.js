@@ -13,6 +13,20 @@ if (process.env.AI_SERVICE_URL && !process.env.AI_SERVICE_URL.startsWith('http')
 
 // Proxy /chat to AI Service
 // Using optionalAuth so it works even if frontend doesn't send token yet (though it should)
+router.get('/wakeup', async (req, res) => {
+    try {
+        console.log("Waking up AI Service...");
+        // Short timeout for wake-up check, we just want to trigger it
+        await axios.get(`${AI_SERVICE_URL}/`, { timeout: 5000 }).catch(() => { });
+        res.json({ status: 'waking_up', message: 'AI Service wake-up signal sent' });
+    } catch (error) {
+        console.error("Wake-up error:", error.message);
+        res.status(200).json({ status: 'waking_up', message: 'Wake-up signal attempt failed but backend is alive' });
+    }
+});
+
+// Proxy /chat to AI Service
+// Using optionalAuth so it works even if frontend doesn't send token yet (though it should)
 router.post('/chat', optionalAuth, async (req, res) => {
     try {
         const { message, context } = req.body;
@@ -63,6 +77,8 @@ router.post('/chat', optionalAuth, async (req, res) => {
         const response = await axios.post(`${AI_SERVICE_URL}/chat`, {
             message,
             context: enrichedContext
+        }, {
+            timeout: 300000 // 5 minutes timeout for AI cold start
         });
 
         return res.json(response.data);

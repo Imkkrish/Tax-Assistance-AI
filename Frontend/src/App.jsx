@@ -36,9 +36,8 @@ function App() {
       try {
         // Ping Backend
         fetch(`${config.backendUrl}/api/health`, { method: 'GET' }).catch(e => console.log('Backend wake-up', e));
-        // Ping AI Service via Backend Proxy or Direct if CORS allows (usually better to ping backend first)
-        // If AI service has a public address, we can ping it too.
-        fetch(`${config.aiServiceUrl}/`, { method: 'GET' }).catch(e => console.log('AI Service wake-up', e));
+        // Wake up AI Service via Backend (this ensures backend also wakes up if sleeping)
+        fetch(`${config.backendUrl}/api/ai/wakeup`, { method: 'GET' }).catch(e => console.log('AI Service wake-up signal sent', e));
       } catch (error) {
         console.error("Wake up failed", error);
       }

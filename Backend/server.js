@@ -133,6 +133,9 @@ const server = app.listen(PORT, () => {
   console.log(`📊 Database: ${process.env.NODE_ENV === 'production' ? 'Production DB' : 'Development DB'}`);
 });
 
+// Set server timeout to 5 minutes (300000 ms) to handle AI cold starts
+server.setTimeout(300000);
+
 handleUnhandledRejections(server);
 
 export default app;
