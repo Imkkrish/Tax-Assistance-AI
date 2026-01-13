@@ -43,8 +43,8 @@ const Login = ({ language = 'en' }) => {
 
   return (
     <div className="max-w-md mx-auto py-12">
-      <div className="bg-white rounded-3xl shadow-soft border border-slate-100 p-8">
-        <h1 className="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+      <div className="bg-white rounded-3xl shadow-soft border border-slate-200 p-8">
+        <h1 className="text-2xl font-bold text-slate-900 mb-6 flex items-center">
           <div className="p-2 bg-primary-50 rounded-xl mr-3">
             <LogIn className="h-6 w-6 text-primary-600" />
           </div>
@@ -52,37 +52,37 @@ const Login = ({ language = 'en' }) => {
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">{t.email}</label>
+            <label className="block text-sm font-semibold text-slate-800 mb-2">{t.email}</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none"
+              className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-600 transition-all outline-none text-slate-900 font-medium"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">{t.password}</label>
+            <label className="block text-sm font-semibold text-slate-800 mb-2">{t.password}</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all outline-none"
+              className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500/20 focus:border-primary-600 transition-all outline-none text-slate-900 font-medium"
               required
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary-600 text-white py-3.5 rounded-xl font-semibold hover:bg-primary-700 disabled:opacity-70 transition-all shadow-lg shadow-primary-600/20 active:scale-[0.98]"
+            className="w-full bg-primary-600 text-white py-3.5 rounded-xl font-bold hover:bg-primary-700 disabled:opacity-70 transition-all shadow-lg shadow-primary-600/20 active:scale-[0.98]"
           >
             {loading ? `${t.login}...` : t.login}
           </button>
         </form>
         <div className="mt-6 text-center">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-700 font-medium">
             {t.dontHaveAccount}{' '}
-            <Link to="/register" className="text-primary-600 hover:text-primary-700 font-semibold hover:underline">
+            <Link to="/register" className="text-primary-700 hover:text-primary-800 font-bold hover:underline">
               {t.signUpHere}
             </Link>
           </p>

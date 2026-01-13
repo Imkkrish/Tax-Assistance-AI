@@ -102,11 +102,11 @@ const Home = ({ language }) => {
             </Link>
           </div>
 
-          <div className="mt-12 flex items-center justify-center gap-8 text-slate-400 grayscale opacity-70">
-            {/* Trust Signals / Logos Placeholder - purely visual */}
-            <div className="flex items-center gap-2"><ShieldCheck size={18} /><span className="text-sm font-medium">Secure</span></div>
-            <div className="flex items-center gap-2"><CheckCircle2 size={18} /><span className="text-sm font-medium">Accurate</span></div>
-            <div className="flex items-center gap-2"><Zap size={18} /><span className="text-sm font-medium">Fast</span></div>
+          <div className="mt-12 flex items-center justify-center gap-8 text-slate-600">
+            {/* Trust Signals / Logos */}
+            <div className="flex items-center gap-2"><ShieldCheck size={18} className="text-primary-600" /><span className="text-sm font-bold">Secure</span></div>
+            <div className="flex items-center gap-2"><CheckCircle2 size={18} className="text-primary-600" /><span className="text-sm font-bold">Accurate</span></div>
+            <div className="flex items-center gap-2"><Zap size={18} className="text-primary-600" /><span className="text-sm font-bold">Fast</span></div>
           </div>
         </div>
       </div>
@@ -118,7 +118,7 @@ const Home = ({ language }) => {
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
               Everything You Need
             </h2>
-            <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+            <p className="text-lg text-slate-700 max-w-2xl mx-auto font-medium">
               Comprehensive tools designed to simplify your financial life.
             </p>
           </div>
@@ -130,19 +130,19 @@ const Home = ({ language }) => {
                 <Link
                   key={index}
                   to={feature.link}
-                  className="group bg-white rounded-3xl p-6 border border-slate-100 shadow-soft hover:shadow-xl hover:border-primary-100 transition-all duration-300 relative overflow-hidden"
+                  className="group bg-white rounded-3xl p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:border-primary-200 transition-all duration-300 relative overflow-hidden"
                 >
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 ${feature.color} transition-transform group-hover:scale-110 duration-300`}>
                     <Icon className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-primary-600 transition-colors">
+                  <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-primary-700 transition-colors">
                     {feature.title}
                   </h3>
-                  <p className="text-slate-500 leading-relaxed text-sm">
+                  <p className="text-slate-700 leading-relaxed text-sm font-medium">
                     {feature.description}
                   </p>
                   <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-300">
-                    <ArrowRight className="text-primary-400" />
+                    <ArrowRight className="text-primary-600" />
                   </div>
                 </Link>
               )

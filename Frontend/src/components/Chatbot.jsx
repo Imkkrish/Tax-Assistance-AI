@@ -20,7 +20,7 @@ const FormatMessage = ({ text }) => {
         if (trimmed.startsWith('* ') || trimmed.startsWith('- ') || /^\d+\./.test(trimmed)) {
             // Remove the bullet char
             const content = trimmed.replace(/^(\* | - |\d+\. )/, '');
-            currentList.push(<li key={`li-${index}`} className="ml-5 list-disc mb-1 marker:text-slate-400">{content}</li>);
+            currentList.push(<li key={`li-${index}`} className="ml-5 list-disc mb-1 marker:text-slate-600 font-medium">{content}</li>);
         } else {
             // If we have a list accumulated, push it first
             if (currentList.length > 0) {
@@ -32,13 +32,13 @@ const FormatMessage = ({ text }) => {
             const parts = line.split(/(\*\*.*?\*\*)/g);
             const lineContent = parts.map((part, i) => {
                 if (part.startsWith('**') && part.endsWith('**')) {
-                    return <strong key={i} className="font-semibold text-slate-800">{part.slice(2, -2)}</strong>;
+                    return <strong key={i} className="font-bold text-slate-900">{part.slice(2, -2)}</strong>;
                 }
                 return part;
             });
 
             if (trimmed) {
-                formattedElements.push(<p key={`p-${index}`} className="mb-3 last:mb-0 leading-relaxed">{lineContent}</p>);
+                formattedElements.push(<p key={`p-${index}`} className="mb-3 last:mb-0 leading-relaxed font-medium">{lineContent}</p>);
             }
         }
     });
@@ -48,7 +48,7 @@ const FormatMessage = ({ text }) => {
         formattedElements.push(<ul key="ul-end" className="mb-3 pl-2">{[...currentList]}</ul>);
     }
 
-    return <div className="text-sm text-slate-600">{formattedElements}</div>;
+    return <div className="text-sm text-slate-800 font-medium">{formattedElements}</div>;
 };
 
 const Chatbot = () => {
@@ -248,10 +248,10 @@ const Chatbot = () => {
 
                                             <div className={`max-w-[75%] space-y-1 ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
                                                 <div className={`px-5 py-3.5 text-sm shadow-sm ${msg.sender === 'user'
-                                                    ? 'bg-indigo-600 text-white rounded-2xl rounded-tr-sm'
+                                                    ? 'bg-indigo-600 text-white rounded-2xl rounded-tr-sm font-medium'
                                                     : msg.isError
-                                                        ? 'bg-red-50 text-red-600 border border-red-100 rounded-2xl rounded-tl-sm'
-                                                        : 'bg-white text-slate-700 border border-slate-100 rounded-2xl rounded-tl-sm'
+                                                        ? 'bg-red-50 text-red-600 border border-red-100 rounded-2xl rounded-tl-sm font-medium'
+                                                        : 'bg-white text-slate-800 border border-slate-200 rounded-2xl rounded-tl-sm font-medium'
                                                     }`}>
                                                     {msg.sender === 'user' ? (
                                                         msg.text
@@ -265,12 +265,12 @@ const Chatbot = () => {
                                     ))}
                                     {isLoading && (
                                         <div className="flex gap-3">
-                                            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border border-slate-100 shadow-sm">
+                                            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border border-slate-200 shadow-sm">
                                                 <Sparkles size={14} className="text-primary-600" />
                                             </div>
-                                            <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-100 flex items-center gap-2">
+                                            <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-sm shadow-sm border border-slate-200 flex items-center gap-2">
                                                 <Loader2 size={16} className="animate-spin text-primary-600" />
-                                                <span className="text-xs font-medium text-slate-400">Analyzing tax laws...</span>
+                                                <span className="text-xs font-semibold text-slate-500">Analyzing tax laws...</span>
                                             </div>
                                         </div>
                                     )}
@@ -278,14 +278,14 @@ const Chatbot = () => {
                                 </div>
 
                                 {/* Input Area */}
-                                <div className="relative flex items-center gap-2 bg-white p-2 border-t border-slate-100">
+                                <div className="relative flex items-center gap-2 bg-white p-2 border-t border-slate-200">
                                     <input
                                         type="text"
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
                                         onKeyPress={handleKeyPress}
                                         placeholder="Ask a question about taxes..."
-                                        className="flex-1 bg-slate-50 text-slate-900 px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 border border-slate-200 focus:border-primary-500 transition-all placeholder:text-slate-500"
+                                        className="flex-1 bg-slate-50 text-slate-900 px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 border border-slate-200 focus:border-primary-500 transition-all placeholder:text-slate-600 font-medium"
                                     />
                                     <button
                                         onClick={handleSend}
