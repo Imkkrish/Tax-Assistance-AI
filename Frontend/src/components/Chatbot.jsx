@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import config from '../config';
 import { MessageCircle, X, Send, Bot, User, Trash2, Loader2, Minimize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -58,6 +59,7 @@ const Chatbot = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [sessionId, setSessionId] = useState('');
     const messagesEndRef = useRef(null);
+    const navigate = useNavigate();
 
     // Initialize Session ID
     useEffect(() => {
@@ -212,7 +214,7 @@ const Chatbot = () => {
                                     <button
                                         onClick={() => {
                                             setIsOpen(false);
-                                            window.location.href = '/login'; // Using standard navigation to ensure route update
+                                            navigate('/login');
                                         }}
                                         className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
                                     >
@@ -221,7 +223,7 @@ const Chatbot = () => {
                                     <button
                                         onClick={() => {
                                             setIsOpen(false);
-                                            window.location.href = '/register';
+                                            navigate('/register');
                                         }}
                                         className="px-6 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl font-medium transition-all"
                                     >
