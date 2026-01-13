@@ -1,45 +1,45 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Calculator, Upload, MessageCircle, BarChart3, Shield, Zap, Globe, CheckCircle } from 'lucide-react'
+import { Calculator, Upload, MessageCircle, BarChart3, ShieldCheck, Zap, Globe, CheckCircle2, ArrowRight } from 'lucide-react'
 import { translations } from '../data/translations'
 
 const Home = ({ language }) => {
   const t = translations[language]
-  
+
   const features = [
     {
       icon: Calculator,
       title: t.calculator,
       description: 'Calculate tax for both old and new regimes with detailed breakdown',
       link: '/calculator',
-      color: 'bg-blue-500'
+      color: 'text-blue-600 bg-blue-50'
     },
     {
       icon: Upload,
       title: t.upload,
       description: 'Upload Form 16 and get automatic data extraction',
       link: '/upload',
-      color: 'bg-green-500'
+      color: 'text-emerald-600 bg-emerald-50'
     },
     {
       icon: MessageCircle,
       title: t.assistant,
       description: 'Get AI-powered guidance for your tax queries',
-      link: '/assistant',
-      color: 'bg-purple-500'
+      link: '/need-help',
+      color: 'text-indigo-600 bg-indigo-50'
     },
     {
       icon: BarChart3,
       title: t.comparison,
       description: 'Compare old vs new tax regime and find the best option',
       link: '/comparison',
-      color: 'bg-orange-500'
+      color: 'text-orange-600 bg-orange-50'
     }
   ]
-  
+
   const benefits = [
     {
-      icon: Shield,
+      icon: ShieldCheck,
       title: t.privacyTitle,
       description: t.privacyText
     },
@@ -54,101 +54,118 @@ const Home = ({ language }) => {
       description: 'Available in multiple Indian languages for better accessibility'
     },
     {
-      icon: CheckCircle,
+      icon: CheckCircle2,
       title: 'Accurate & Updated',
       description: 'Always up-to-date with latest tax slabs and regulations'
     }
   ]
-  
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen -mt-8"> {/* Negative margin to offset container padding for full bleed hero */}
+
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 text-white py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
-            {t.welcomeTitle}
+      <div className="relative overflow-hidden py-20 lg:py-28 px-4 rounded-3xl mb-12">
+        {/* Background Decorative Elements */}
+        <div className="absolute top-0 left-0 w-full h-full bg-slate-50 -z-10 rounded-3xl"></div>
+        <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-primary-100 rounded-full blur-3xl opacity-50 -z-10 animate-pulse"></div>
+        <div className="absolute bottom-[-10%] left-[-5%] w-72 h-72 bg-emerald-100 rounded-full blur-3xl opacity-50 -z-10"></div>
+
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 shadow-sm mb-8 animate-fade-in-up">
+            <span className="flex h-2 w-2 rounded-full bg-primary-600 animate-pulse"></span>
+            <span className="text-xs font-semibold text-slate-600 tracking-wide uppercase">AI-Powered Tax Assistant</span>
+          </div>
+
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 mb-6 leading-tight">
+            Tax Filing made <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-indigo-700">Smart & Simple</span>
           </h1>
-          <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
+
+          <p className="text-xl text-slate-700 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
             {t.welcomeSubtitle}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               to="/calculator"
-              className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors duration-200 shadow-lg"
+              className="group flex items-center gap-2 bg-primary-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/25 custom-hover-lift"
             >
               {t.calculateTax}
+              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               to="/upload"
-              className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-blue-600 transition-colors duration-200"
+              className="flex items-center gap-2 bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm hover:shadow-md"
             >
+              <Upload className="h-5 w-5 text-slate-500" />
               {t.uploadForm16}
             </Link>
           </div>
+
+          <div className="mt-12 flex items-center justify-center gap-8 text-slate-400 grayscale opacity-70">
+            {/* Trust Signals / Logos Placeholder - purely visual */}
+            <div className="flex items-center gap-2"><ShieldCheck size={18} /><span className="text-sm font-medium">Secure</span></div>
+            <div className="flex items-center gap-2"><CheckCircle2 size={18} /><span className="text-sm font-medium">Accurate</span></div>
+            <div className="flex items-center gap-2"><Zap size={18} /><span className="text-sm font-medium">Fast</span></div>
+          </div>
         </div>
       </div>
-      
-      {/* Features Section */}
-      <div className="py-20 bg-white">
-        <div className="container mx-auto px-4">
+
+      {/* Features Section - Cards */}
+      <div className="py-12">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">
-              Everything You Need for Tax Filing
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Everything You Need
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Comprehensive tools to make your income tax filing simple, accurate, and stress-free
+            <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+              Comprehensive tools designed to simplify your financial life.
             </p>
           </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => {
               const Icon = feature.icon
               return (
                 <Link
                   key={index}
                   to={feature.link}
-                  className="group bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 hover:border-blue-200"
+                  className="group bg-white rounded-3xl p-6 border border-slate-100 shadow-soft hover:shadow-xl hover:border-primary-100 transition-all duration-300 relative overflow-hidden"
                 >
-                  <div className={`${feature.color} p-3 rounded-lg inline-block mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <Icon className="h-6 w-6 text-white" />
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 ${feature.color} transition-transform group-hover:scale-110 duration-300`}>
+                    <Icon className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-primary-600 transition-colors">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-slate-500 leading-relaxed text-sm">
                     {feature.description}
                   </p>
+                  <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-300">
+                    <ArrowRight className="text-primary-400" />
+                  </div>
                 </Link>
               )
             })}
           </div>
         </div>
       </div>
-      
+
       {/* Benefits Section */}
-      <div className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">
-              Why Choose TaxAssist AI?
-            </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Built with privacy, accuracy, and user experience in mind
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="py-20 bg-slate-50/50 rounded-3xl my-12 border border-slate-100">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
             {benefits.map((benefit, index) => {
               const Icon = benefit.icon
               return (
-                <div key={index} className="text-center">
-                  <div className="bg-blue-100 p-4 rounded-full inline-block mb-4">
-                    <Icon className="h-8 w-8 text-blue-600" />
+                <div key={index} className="flex flex-col items-start">
+                  <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 mb-4">
+                    <Icon className="h-6 w-6 text-primary-600" />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  <h3 className="text-lg font-bold text-slate-900 mb-2">
                     {benefit.title}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-slate-600 text-sm leading-relaxed">
                     {benefit.description}
                   </p>
                 </div>
@@ -157,21 +174,26 @@ const Home = ({ language }) => {
           </div>
         </div>
       </div>
-      
+
       {/* CTA Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+      <div className="relative py-20 px-4 text-center rounded-3xl overflow-hidden bg-slate-900">
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500 rounded-full blur-[100px] opacity-20"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-500 rounded-full blur-[100px] opacity-20"></div>
+
+        <div className="relative z-10 max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
             Ready to Simplify Your Tax Filing?
           </h2>
-          <p className="text-xl mb-8 text-blue-100">
-            Join thousands who trust TaxAssist AI for their income tax calculations
+          <p className="text-lg text-slate-300 mb-10">
+            Join thousands of users who trust TaxAssist AI for accurate and secure tax calculations.
           </p>
           <Link
             to="/calculator"
-            className="bg-white text-blue-600 px-8 py-4 rounded-lg font-semibold text-lg hover:bg-blue-50 transition-colors duration-200 shadow-lg inline-block"
+            className="inline-flex items-center gap-2 bg-white text-slate-900 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-primary-50 transition-colors shadow-lg shadow-white/10"
           >
             Get Started Now
+            <ArrowRight className="h-5 w-5" />
           </Link>
         </div>
       </div>
