@@ -13,7 +13,16 @@ const Navbar = ({ language, setLanguage }) => {
   const location = useLocation()
   const t = translations[language]
 
+  const languages = [
+    { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
+    { code: 'hi', name: 'Hindi', nativeName: 'हिंदी', flag: '🇮🇳' },
+    { code: 'mr', name: 'Marathi', nativeName: 'मराठी', flag: '🇮🇳' },
+    { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்', flag: '🇮🇳' },
+    { code: 'te', name: 'Telugu', nativeName: 'తెలుగు', flag: '🇮🇳' },
+  ]
+
   // Detect scroll for glass effect intensity
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20)
@@ -122,7 +131,6 @@ const Navbar = ({ language, setLanguage }) => {
 
           {/* Mobile Menu Button */}
           <div className="lg:hidden flex items-center gap-3 z-50">
-            <LanguageSwitcher language={language} setLanguage={setLanguage} />
             <button
               onClick={() => setIsOpen(true)}
               className="p-2.5 rounded-xl text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-slate-50 focus:outline-none active:scale-95 transition-all"
@@ -189,8 +197,24 @@ const Navbar = ({ language, setLanguage }) => {
                 })}
               </div>
 
-              {/* Drawer Footer (Auth) */}
-              <div className="p-5 border-t border-slate-100 bg-slate-50/30">
+              {/* Drawer Footer (Auth & Language) */}
+              <div className="p-5 border-t border-slate-100 bg-slate-50/30 space-y-4">
+                <Link
+                  to="/language"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-white border border-slate-200 rounded-xl shadow-sm active:scale-95 transition-all text-slate-700"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-primary-50 flex items-center justify-center text-primary-600">
+                      <span className="text-lg leading-none">
+                        {languages.find(l => l.code === language)?.flag || '🌐'}
+                      </span>
+                    </div>
+                    <span className="font-semibold">Change Language</span>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-slate-400" />
+                </Link>
+
                 {!apiClient.token ? (
                   <div className="grid grid-cols-2 gap-3">
                     <RouterLink

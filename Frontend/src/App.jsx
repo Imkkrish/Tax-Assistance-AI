@@ -14,6 +14,7 @@ import DocumentUpload from './pages/DocumentUpload'
 import TaxComparison from './pages/TaxComparison'
 import DeductionGuide from './pages/DeductionGuide'
 import NeedHelp from './pages/NeedHelp'
+import Language from './pages/Language'
 import FloatingHelpButton from './components/FloatingHelpButton'
 import Chatbot from './components/Chatbot'
 
@@ -62,6 +63,7 @@ function App() {
               <Route path="/comparison" element={<TaxComparison language={language} />} />
               <Route path="/deductions" element={<DeductionGuide language={language} />} />
               <Route path="/need-help" element={<NeedHelp language={language} />} />
+              <Route path="/language" element={<Language language={language} setLanguage={setLanguage} />} />
               <Route path="/login" element={<Login language={language} />} />
               <Route path="/register" element={<Register language={language} />} />
             </Routes>
