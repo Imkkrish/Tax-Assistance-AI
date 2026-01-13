@@ -209,12 +209,24 @@ const Chatbot = () => {
                                     </p>
                                 </div>
                                 <div className="flex flex-col gap-3 w-full">
-                                    <a href="/login" className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+                                    <button
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            window.location.href = '/login'; // Using standard navigation to ensure route update
+                                        }}
+                                        className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-all shadow-md hover:shadow-lg"
+                                    >
                                         Login
-                                    </a>
-                                    <a href="/register" className="px-6 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl font-medium transition-all">
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setIsOpen(false);
+                                            window.location.href = '/register';
+                                        }}
+                                        className="px-6 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl font-medium transition-all"
+                                    >
                                         Create Account
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         ) : (

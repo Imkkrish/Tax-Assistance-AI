@@ -109,16 +109,23 @@ app.use('/uploads', express.static('uploads'));
 // API routes
 app.use('/api', routes);
 
-// Serve static files from dist directory (built frontend)
-app.use(express.static(path.join(__dirname, 'dist')));
+// Serve static files from dist directory (built frontend) - COMMENTED OUT FOR SEPARATE DEPLOYMENT
+// app.use(express.static(path.join(__dirname, 'dist')));
 
-// Catch all handler: send back index.html for client-side routing
+// Catch all handler
 app.get('*', (req, res) => {
-  // Skip if it's an API route (though this shouldn't happen since /api is handled above)
+  // If it's an API route that wasn't caught above, return 404 JSON
   if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
     return res.status(404).json({ success: false, message: 'API endpoint not found' });
   }
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+
+  // For root request, show a simple message
+  if (req.path === '/') {
+    return res.json({ success: true, message: 'Tax Assistant API is running' });
+  }
+
+  // Otherwise 404
+  res.status(404).send('Not Found');
 });
 
 // Error handling middleware (must be last)
