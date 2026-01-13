@@ -155,6 +155,9 @@ const Chatbot = () => {
         if (e.key === 'Enter') handleSend();
     };
 
+    // Check auth status
+    const isLoggedIn = !!localStorage.getItem('authToken');
+
     return (
         <div className="fixed bottom-6 right-6 z-50 font-sans">
             <AnimatePresence>
@@ -194,63 +197,87 @@ const Chatbot = () => {
                             </div>
                         </div>
 
-                        {/* Messages Area */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-950/50 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
-                            {messages.map((msg) => (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    key={msg.id}
-                                    className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                                >
-                                    <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm shadow-sm ${msg.sender === 'user'
-                                        ? 'bg-indigo-600 text-white rounded-br-none'
-                                        : msg.isError
-                                            ? 'bg-red-50 text-red-600 border border-red-200 rounded-bl-none'
-                                            : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-bl-none'
-                                        }`}>
-                                        {msg.sender === 'user' ? (
-                                            msg.text
-                                        ) : (
-                                            <FormatMessage text={msg.text} />
-                                        )}
+                        {!isLoggedIn ? (
+                            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-6">
+                                <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mb-2">
+                                    <Bot size={40} className="text-indigo-600" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">Login Required</h3>
+                                    <p className="text-gray-600 dark:text-gray-300 text-sm">
+                                        Please login to chat with our AI Tax Assistant and get personalized help.
+                                    </p>
+                                </div>
+                                <div className="flex flex-col gap-3 w-full">
+                                    <a href="/login" className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-all shadow-md hover:shadow-lg">
+                                        Login
+                                    </a>
+                                    <a href="/register" className="px-6 py-2.5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl font-medium transition-all">
+                                        Create Account
+                                    </a>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                {/* Messages Area */}
+                                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-950/50 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
+                                    {messages.map((msg) => (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            key={msg.id}
+                                            className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                                        >
+                                            <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm shadow-sm ${msg.sender === 'user'
+                                                ? 'bg-indigo-600 text-white rounded-br-none'
+                                                : msg.isError
+                                                    ? 'bg-red-50 text-red-600 border border-red-200 rounded-bl-none'
+                                                    : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-bl-none'
+                                                }`}>
+                                                {msg.sender === 'user' ? (
+                                                    msg.text
+                                                ) : (
+                                                    <FormatMessage text={msg.text} />
+                                                )}
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                    {isLoading && (
+                                        <div className="flex justify-start">
+                                            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-3 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-2">
+                                                <Loader2 size={16} className="animate-spin text-indigo-600" />
+                                                <span className="text-xs text-slate-500">Thinking...</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <div ref={messagesEndRef} />
+                                </div>
+
+                                {/* Input Area */}
+                                <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="text"
+                                            value={input}
+                                            onChange={(e) => setInput(e.target.value)}
+                                            onKeyPress={handleKeyPress}
+                                            placeholder="Ask about Income Tax..."
+                                            className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 border border-transparent focus:border-indigo-500 transition-all placeholder:text-slate-400"
+                                        />
+                                        <button
+                                            onClick={handleSend}
+                                            disabled={!input.trim() || isLoading}
+                                            className="p-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:hover:bg-indigo-600 text-white rounded-xl transition-all shadow-sm active:scale-95"
+                                        >
+                                            <Send size={18} />
+                                        </button>
                                     </div>
-                                </motion.div>
-                            ))}
-                            {isLoading && (
-                                <div className="flex justify-start">
-                                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-3 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-2">
-                                        <Loader2 size={16} className="animate-spin text-indigo-600" />
-                                        <span className="text-xs text-slate-500">Thinking...</span>
+                                    <div className="text-[10px] text-center mt-2 text-slate-400">
+                                        AI responses can be inaccurate. verify strictly important info.
                                     </div>
                                 </div>
-                            )}
-                            <div ref={messagesEndRef} />
-                        </div>
-
-                        {/* Input Area */}
-                        <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="text"
-                                    value={input}
-                                    onChange={(e) => setInput(e.target.value)}
-                                    onKeyPress={handleKeyPress}
-                                    placeholder="Ask about Income Tax..."
-                                    className="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 border border-transparent focus:border-indigo-500 transition-all placeholder:text-slate-400"
-                                />
-                                <button
-                                    onClick={handleSend}
-                                    disabled={!input.trim() || isLoading}
-                                    className="p-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:hover:bg-indigo-600 text-white rounded-xl transition-all shadow-sm active:scale-95"
-                                >
-                                    <Send size={18} />
-                                </button>
-                            </div>
-                            <div className="text-[10px] text-center mt-2 text-slate-400">
-                                AI responses can be inaccurate. verify strictly important info.
-                            </div>
-                        </div>
+                            </>
+                        )}
                     </motion.div>
                 )}
             </AnimatePresence>

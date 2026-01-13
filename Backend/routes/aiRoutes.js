@@ -26,8 +26,9 @@ router.get('/wakeup', async (req, res) => {
 });
 
 // Proxy /chat to AI Service
-// Using optionalAuth so it works even if frontend doesn't send token yet (though it should)
-router.post('/chat', optionalAuth, async (req, res) => {
+// Proxy /chat to AI Service
+// Using protect to enforce login
+router.post('/chat', protect, async (req, res) => {
     try {
         const { message, context } = req.body;
 
