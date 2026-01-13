@@ -9,7 +9,7 @@ import RequireAuth from './components/RequireAuth'
 import Home from './pages/Home'
 import TaxCalculator from './pages/TaxCalculator'
 import DocumentUpload from './pages/DocumentUpload'
-import ChatAssistant from './pages/ChatAssistant'
+
 import TaxComparison from './pages/TaxComparison'
 import DeductionGuide from './pages/DeductionGuide'
 import NeedHelp from './pages/NeedHelp'
@@ -55,7 +55,7 @@ function App() {
             <Route path="/" element={<Home language={language} />} />
             <Route path="/calculator" element={<TaxCalculator language={language} />} />
             <Route path="/upload" element={<RequireAuth><DocumentUpload language={language} /></RequireAuth>} />
-            <Route path="/assistant" element={<RequireAuth><ChatAssistant language={language} /></RequireAuth>} />
+
             <Route path="/comparison" element={<TaxComparison language={language} />} />
             <Route path="/deductions" element={<DeductionGuide language={language} />} />
             <Route path="/need-help" element={<NeedHelp language={language} />} />

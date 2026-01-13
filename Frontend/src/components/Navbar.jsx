@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Calculator, Upload, MessageCircle, BarChart3, BookOpen, HelpCircle, Menu, X } from 'lucide-react'
+import { Calculator, Upload, BarChart3, BookOpen, HelpCircle, Menu, X } from 'lucide-react'
 import { translations } from '../data/translations'
 import apiClient from '../utils/api'
 import { Link as RouterLink } from 'react-router-dom'
@@ -15,7 +15,7 @@ const Navbar = ({ language, setLanguage }) => {
     { path: '/', icon: BookOpen, label: t.nav.home },
     { path: '/calculator', icon: Calculator, label: t.nav.calculator },
     { path: '/upload', icon: Upload, label: t.nav.upload },
-    { path: '/assistant', icon: MessageCircle, label: t.nav.assistant },
+
     { path: '/comparison', icon: BarChart3, label: t.nav.comparison },
     { path: '/deductions', icon: BookOpen, label: t.nav.deductions },
     { path: '/need-help', icon: null, label: 'Need Help' }

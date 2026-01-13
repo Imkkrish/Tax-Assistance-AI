@@ -131,16 +131,7 @@ const Chatbot = () => {
     const handleEndSession = async () => {
         if (!window.confirm("Are you sure you want to end this session? Chat history will be permanently deleted.")) return;
 
-        try {
-            // Direct call to AI service to flush session if needed, or via backend
-            // Assuming direct call for now based on original code, but ideally should be via backend
-            // Original was: http://localhost:8000/end_session
-            await fetch(`${config.aiServiceUrl}/end_session`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ session_id: sessionId })
-            });
-        } catch (e) { console.error("Error ending session", e); }
+        // Session is client-side only for this stateless backend, so we just reset local state.
 
         // Reset local state
         setMessages([
